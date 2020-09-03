@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>点名器</title>
+        <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.js"></script>
+    </head>
+
+    <body>
+        <div class="container" id="app">
+            <div class="jumbotron">
+                <h1 class="display-4">点名器</h1>
+                <button type="button" class="btn btn-primary" @click='rollCall()'>点名</button>
+                <button type="button" class="btn btn-secondary" @click='reset()'>重置</button>
+                <hr class="my-4">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" width='20%'>序号</th>
+                            <th scope="col" width='20%'>名字</th>
+                            <th scope="col" width='20%'>点名状态</th>
+                            <th scope="col" width='30%'>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for='obj in nameList' :key="obj.number">
+                            <th scope="row">{{obj.number}}</th>
+                            <td>{{obj.name}}</td>
+                            <td>{{obj.state?'未点名':"已点名"}}</td>
+                            <td v-if='obj.state'><button type="button" class="btn btn-primary"
+                                    @click='rollCall(obj.number-1)'>设置已点</button></td>
+                            <td v-if='!obj.state'><button type="button" class="btn btn-secondary"
+                                    @click='rollCall(obj.number-1)'>设置未点</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </body>
+
+    <script>
+        Vue.config.silent = true
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    nameList: [
+                        { name: '小明0', number: 1, state: true },
+                        { name: '小明1', number: 2, state: true },
+                        { name: '小明2', number: 3, state: true },
+                        { name: '小明3', number: 4, state: true }
+                    ]
+                }
+            },
+            computed: {
+            },
+            methods: {
+                rollCall: function (i) {
+                    if (i == 0 || i) {
+                        this.nameList[i].state = !this.nameList[i].state
+                        return
+                    }
+                    let newArr = this.nameList.filter(i => i.state)
+                    if (newArr.length == 0) return alert('点名结束')
+                    newArr.sort(() => Math.random() - 0.5)
+                    this.nameList = this.nameList.map(item => {
+                        if (item.number == newArr[0].number) {
+                            item.state = false
+                        }
+                        return item
+                    })
+                },
+                reset: function () {
+                    this.nameList = this.nameList.map(item => {
+                        item.state = true
+                        return item
+                    })
+                }
+            },
+
+        })
+    </script>
+
+</html>
